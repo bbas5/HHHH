@@ -1,524 +1,1160 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تصميم صورك</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: #f9fdfb;
-      margin: 0;
-      padding: 0 20px 40px 20px;
-      direction: rtl;
-      color: #333;
-    }
-    
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #22c55e;
-      color: white;
-      padding: 8px 25px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      z-index: 1000;
-      height: 48px;
-      box-sizing: border-box;
-    }
-    
-    .header-left, .header-right {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      direction: ltr;
-    }
-    
-    header select {
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: none;
-      background: #16a34a;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-      height: 30px;
-    }
-    
-    header a {
-      color: white;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    
-    main {
-      padding-top: 70px;
-      max-width: 500px;
-      margin: auto;
-      text-align: center;
-    }
-    
-    h1 {
-      font-size: 26px;
-      color: #222;
-    }
-    
-    .description {
-      font-size: 17px;
-      color: #444;
-      line-height: 1.4;
-      margin-bottom: 30px;
-    }
-    
-    .upload-label {
-      display: block;
-      margin: 20px auto;
-      padding: 14px;
-      background-color: #22c55e;
-      color: white;
-      font-weight: bold;
-      border-radius: 16px;
-      cursor: pointer;
-      width: 220px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      font-size: 18px;
-      transition: all 0.3s;
-    }
-    
-    .upload-label:hover {
-      background-color: #16a34a;
-      transform: scale(1.03);
-    }
-    
-    input[type="file"] {
-      display: none;
-    }
-    
-    #descBox {
-      width: 100%;
-      height: 100px;
-      margin: 10px auto;
-      padding: 12px;
-      border-radius: 12px;
-      border: 2px solid #22c55e;
-      resize: vertical;
-      font-family: 'Cairo';
-    }
-    
-    .btn {
-      display: block;
-      margin: 15px auto;
-      padding: 14px 25px;
-      background-color: #22c55e;
-      color: white;
-      border: none;
-      border-radius: 16px;
-      font-size: 18px;
-      cursor: pointer;
-      width: 100%;
-      max-width: 300px;
-      transition: all 0.3s;
-    }
-    
-    .btn:hover:not(:disabled) {
-      background-color: #16a34a;
-      transform: scale(1.03);
-    }
-    
-    .btn:disabled {
-      background-color: #a0a0a0;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-    
-    .btn.pulse {
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
-      70% { box-shadow: 0 0 0 15px rgba(34,197,94,0); }
-      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
-    }
-    
-    #codeBox {
-      font-size: 26px;
-      color: green;
-      font-weight: bold;
-      margin: 20px 0;
-    }
-    
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #dc2626;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 12px;
-      opacity: 0;
-      transition: opacity 0.5s;
-      z-index: 10000;
-    }
-    
-    .toast.show {
-      opacity: 1;
-    }
-    
-    .messaging-panel {
-      max-width: 500px;
-      margin: 30px auto;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      display: none;
-    }
-    
-    .message {
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-    }
-    
-    .status-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      margin-right: 5px;
-    }
-    
-    .status-pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
-    
-    .status-completed {
-      background: #d1fae5;
-      color: #065f46;
-    }
-    
-    #designResult {
-      max-width: 100%;
-      margin-top: 15px;
-      border: 2px solid #22c55e;
-      border-radius: 8px;
-      display: none;
-    }
-    
-    .bottom-notice {
-      background: #f6ecd4;
-      border: 3px solid #cbbf8a;
-      border-radius: 18px;
-      padding: 15px;
-      margin: 20px auto;
-      max-width: 460px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <div class="header-left">
-    <select id="langSelect">
-      <option value="ar" selected>عربي</option>
-      <option value="en">English</option>
-    </select>
-    <a href="#about">من نحن؟</a>
-  </div>
-  <div class="header-right">
-    <a href="#"><i class="fab fa-facebook"></i></a>
-    <a href="#"><i class="fab fa-twitter"></i></a>
-    <a href="#"><i class="fab fa-instagram"></i></a>
-  </div>
-</header>
-
-<main>
-  <h1 id="title">اصنع صورتك بأناقة... نحن هنا لنصمم لك التميز</h1>
-  <p class="description" id="description">
-    نقدم لك خدمة تصميم صور احترافية وفق ذوقك، وبطريقة سهلة ومجانية — فقط ارفع صورتك، شاهد إعلانًا بسيطًا، واحصل على رمزك الخاص لتبدأ رحلتك مع التصميم.
-  </p>
-  
-  <label for="imageUpload" class="upload-label pulse" id="chooseLabel">اختر صورتك</label>
-  <input type="file" id="imageUpload" accept="image/*">
-  
-  <textarea id="descBox" placeholder="اكتب وصفًا بسيطًا لصورتك هنا... (اختياري)"></textarea>
-  
-  <button class="btn" id="uploadBtn" disabled>أرسل الصورة الآن</button>
-  <button class="btn" id="watchBtn" disabled>شاهد إعلانًا</button>
-  <button class="btn" id="getCodeBtn" disabled>احصل على رمزك</button>
-  
-  <div id="codeBox"></div>
-  
-  <div class="messaging-panel" id="messagingPanel">
-    <h3>مراسلة المصمم</h3>
-    <div class="message">
-      <span class="status-badge status-pending">قيد الانتظار</span>
-      <span id="orderCodeDisplay"></span>
-    </div>
-    <button class="btn" id="sendToDesignerBtn">
-      <i class="fas fa-paper-plane"></i> إرسال الطلب للمصمم
-    </button>
-    <div id="clientMessages"></div>
-    <img id="designResult" alt="التصميم النهائي">
-  </div>
-  
-  <div class="bottom-notice">
-    ⚠️ لا ترسل صوراً حساسة لأن المصممين حقيقيون
-  </div>
-  
-  <section id="about" style="margin-top:40px; text-align:right;">
-    <h2>من نحن؟</h2>
-    <p>نحن فريق متخصص في تحويل صورك العادية إلى تصاميم مذهلة، بدقة عالية ولمسة فنية راقية.</p>
-  </section>
-</main>
-
-<div class="toast" id="toast"></div>
-
-<script type="module">
-  // Import Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { 
-    getAuth, 
-    signInAnonymously,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-  import { 
-    getFirestore, 
-    doc, 
-    setDoc, 
-    updateDoc,
-    onSnapshot,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-  import { 
-    getStorage, 
-    ref, 
-    uploadBytes, 
-    getDownloadURL
-  } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
-
-  // تكوين Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCs5uEbZeiGTqey6Z-YdOa6HNWk_WkKlb4",
-    authDomain: "design-for-me.firebaseapp.com",
-    projectId: "design-for-me",
-    storageBucket: "design-for-me.appspot.com",
-    messagingSenderId: "769602104559",
-    appId: "1:769602104559:web:bdc7c12db4f956818fff1a",
-    measurementId: "G-8ZW2737BP0"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
-  // ============= متغيرات النظام =============
-  let lang = 'ar';
-  let adWatched = false;
-  let imageSelected = false;
-  let imageUploaded = false;
-  let currentOrder = null;
-  let currentImageUrl = '';
-  let currentUser = null;
-  
-  // عناصر الواجهة
-  const elements = {
-    imageUpload: document.getElementById('imageUpload'),
-    uploadBtn: document.getElementById('uploadBtn'),
-    watchBtn: document.getElementById('watchBtn'),
-    getCodeBtn: document.getElementById('getCodeBtn'),
-    codeBox: document.getElementById('codeBox'),
-    messagingPanel: document.getElementById('messagingPanel'),
-    orderCodeDisplay: document.getElementById('orderCodeDisplay'),
-    clientMessages: document.getElementById('clientMessages'),
-    designResult: document.getElementById('designResult'),
-    toast: document.getElementById('toast'),
-    sendToDesignerBtn: document.getElementById('sendToDesignerBtn')
-  };
-  
-  // ============= مصادقة مجهولة =============
-  signInAnonymously(auth)
-    .then((userCredential) => {
-      currentUser = userCredential.user;
-    })
-    .catch((error) => {
-      console.error("Anonymous auth error:", error);
-      showToast('حدث خطأ في الاتصال بالخادم');
-    });
-
-  // ============= الأحداث =============
-  elements.imageUpload.addEventListener('change', handleImageSelect);
-  elements.uploadBtn.addEventListener('click', uploadImage);
-  elements.watchBtn.addEventListener('click', watchAd);
-  elements.getCodeBtn.addEventListener('click', generateCode);
-  elements.sendToDesignerBtn.addEventListener('click', sendToDesigner);
-  document.getElementById('langSelect').addEventListener('change', changeLanguage);
-
-  // ============= الدوال الأساسية =============
-  function handleImageSelect() {
-    if (this.files.length > 0) {
-      imageSelected = true;
-      elements.uploadBtn.disabled = false;
-      elements.uploadBtn.classList.add('pulse');
-      document.getElementById('chooseLabel').classList.remove('pulse');
-      showToast('تم اختيار الصورة. الرجاء الضغط على "أرسل الصورة"');
-    }
-  }
-
-  async function uploadImage() {
-    if (!imageSelected) {
-      showToast('يرجى اختيار صورة أولاً');
-      return;
-    }
-    
-    const file = elements.imageUpload.files[0];
-    const storageRef = ref(storage, `client_uploads/${Date.now()}_${file.name}`);
-    
-    try {
-      showToast('جاري رفع الصورة...');
-      const uploadTask = await uploadBytes(storageRef, file);
-      currentImageUrl = await getDownloadURL(uploadTask.ref);
-      
-      imageUploaded = true;
-      elements.uploadBtn.disabled = true;
-      elements.uploadBtn.classList.remove('pulse');
-      elements.watchBtn.disabled = false;
-      elements.watchBtn.classList.add('pulse');
-      showToast('تم رفع الصورة بنجاح! الرجاء مشاهدة الإعلان');
-    } catch (error) {
-      showToast('حدث خطأ أثناء رفع الصورة');
-      console.error("Upload error:", error);
-    }
-  }
-
-  function watchAd() {
-    if (!imageUploaded) {
-      showToast('يرجى رفع الصورة أولاً');
-      return;
-    }
-    
-    // محاكاة مشاهدة الإعلان
-    showToast('جاري تشغيل الإعلان...');
-    
-    setTimeout(() => {
-      adWatched = true;
-      elements.watchBtn.disabled = true;
-      elements.watchBtn.classList.remove('pulse');
-      elements.getCodeBtn.disabled = false;
-      elements.getCodeBtn.classList.add('pulse');
-      showToast('شكرًا لمشاهدتك الإعلان! احصل على رمزك الآن');
-    }, 5000);
-  }
-
-  async function generateCode() {
-    if (!adWatched) {
-      showToast('يرجى مشاهدة الإعلان أولاً');
-      return;
-    }
-    
-    // إنشاء طلب جديد
-    const orderCode = Math.floor(100000 + Math.random() * 900000);
-    const orderId = 'DSGN-' + Date.now();
-    
-    const orderData = {
-      id: orderId,
-      code: orderCode,
-      imageUrl: currentImageUrl,
-      description: document.getElementById('descBox').value,
-      status: 'pending',
-      clientId: currentUser?.uid || 'anonymous',
-      createdAt: serverTimestamp(),
-      adWatched: true
-    };
-    
-    try {
-      await setDoc(doc(db, 'design_orders', orderId), orderData);
-      
-      currentOrder = orderData;
-      elements.codeBox.textContent = orderCode;
-      elements.orderCodeDisplay.textContent = `رمز طلبك: ${orderCode}`;
-      elements.messagingPanel.style.display = 'block';
-      elements.getCodeBtn.style.display = 'none';
-      
-      showToast('تم إنشاء طلبك بنجاح! يرجى إرسال الرمز للمصمم');
-      
-      // متابعة حالة الطلب
-      trackOrderStatus(orderId);
-    } catch (error) {
-      showToast('حدث خطأ أثناء إنشاء الطلب');
-      console.error("Order creation error:", error);
-    }
-  }
-
-  async function sendToDesigner() {
-    if (!currentOrder) return;
-    
-    try {
-      await updateDoc(doc(db, 'design_orders', currentOrder.id), {
-        status: 'sent',
-        sentAt: serverTimestamp()
-      });
-      
-      elements.clientMessages.innerHTML = `
-        <div class="message">
-          <p><i class="fas fa-check-circle" style="color:green"></i> تم إرسال طلبك للمصمم</p>
-          <p>رقم الطلب: <strong>${currentOrder.id}</strong></p>
-          <p>سيتم إعلامك عند اكتمال التصميم</p>
-        </div>
-      `;
-      
-      showToast('تم إرسال الطلب بنجاح للمصممين');
-    } catch (error) {
-      showToast('حدث خطأ أثناء إرسال الطلب');
-      console.error("Send to designer error:", error);
-    }
-  }
-
-  function trackOrderStatus(orderId) {
-    onSnapshot(doc(db, 'design_orders', orderId), (doc) => {
-      const order = doc.data();
-      
-      if (order.status === 'completed') {
-        elements.clientMessages.innerHTML += `
-          <div class="message">
-            <p><i class="fas fa-check-circle" style="color:green"></i> تم اكتمال التصميم!</p>
-            <p>ملاحظات المصمم: ${order.designerNotes || 'تم التعديل حسب طلبك'}</p>
-          </div>
-        `;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المصممين</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --danger: #dc2626;
+            --warning: #fbbf24;
+        }
         
-        elements.designResult.src = order.finalDesignUrl;
-        elements.designResult.style.display = 'block';
-        showToast('تم استلام التصميم النهائي');
-      }
-    });
-  }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        .login-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-form h2 {
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Cairo';
+            margin-bottom: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Cairo';
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .login-form button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .dashboard {
+            display: none;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .main-content {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .designer-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .designer-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .designer-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .designer-points {
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+        
+        .nav-menu {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .nav-item:hover {
+            background: #f1f5f9;
+        }
+        
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8fafc;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Cairo';
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .accept-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .accept-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .reject-btn {
+            background: var(--danger);
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .reject-btn:hover {
+            background: #b91c1c;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-in-progress {
+            background: #bfdbfe;
+            color: #1e40af;
+        }
+        
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .points-system {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .design-workspace {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .workspace-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .workspace-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .workspace-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+        
+        .workspace-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .workspace-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .workspace-section h3 {
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+        
+        .workspace-image {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .workspace-notes {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-family: 'Cairo';
+            resize: vertical;
+        }
+        
+        .workspace-upload {
+            margin-top: 1rem;
+        }
+        
+        .workspace-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1100;
+            max-width: 400px;
+        }
+        
+        #toast.show {
+            opacity: 1;
+        }
+        
+        #toast.error {
+            background: var(--danger);
+        }
+        
+        .star-rating {
+            color: var(--secondary);
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .workspace-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
 
-  function showToast(message) {
-    elements.toast.textContent = message;
-    elements.toast.classList.add('show');
-    setTimeout(() => {
-      elements.toast.classList.remove('show');
-    }, 3000);
-  }
+<body>
+    
+    
+    <!-- نظام تسجيل الدخول -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-form">
+            <h2>تسجيل دخول المصممين</h2>
+            <div>
+                <label for="designerEmail">البريد الإلكتروني</label>
+                <input type="email" id="designerEmail" placeholder="أدخل بريدك الإلكتروني">
+            </div>
+            <div>
+                <label for="designerPassword">كلمة المرور</label>
+                <input type="password" id="designerPassword" placeholder="أدخل كلمة المرور">
+            </div>
+            <button onclick="loginDesigner()">تسجيل الدخول</button>
+        </div>
+    </div>
 
-  function changeLanguage() {
-    lang = document.getElementById('langSelect').value;
-    // يمكن إضافة تغيير النصوص هنا
-  }
-</script>
+    <!-- لوحة التحكم -->
+    <div class="dashboard" id="dashboard">
+        <!-- الشريط الجانبي -->
+        <div class="sidebar">
+            <div class="designer-profile">
+                <div class="designer-avatar" id="designerAvatar">م</div>
+                <div class="designer-name" id="designerName">محمد أحمد</div>
+                <div class="designer-points" id="designerPoints">120 نقطة</div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="showSection('dashboard-section')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>لوحة التحكم</span>
+                </div>
+                <div class="nav-item" onclick="showSection('new-orders-section')">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>طلبات جديدة</span>
+                </div>
+                <div class="nav-item" onclick="showSection('in-progress-section')">
+                    <i class="fas fa-spinner"></i>
+                    <span>قيد التنفيذ</span>
+                </div>
+                <div class="nav-item" onclick="showSection('completed-section')">
+                    <i class="fas fa-check-circle"></i>
+                    <span>مكتملة</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <!-- قسم لوحة التحكم -->
+            <div class="section" id="dashboard-section">
+                <h2>نظرة عامة</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">طلبات جديدة</div>
+                        <div class="stat-value" id="newOrdersCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">قيد التنفيذ</div>
+                        <div class="stat-value" id="inProgressCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">مكتملة</div>
+                        <div class="stat-value" id="completedCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">إجمالي النقاط</div>
+                        <div class="stat-value" id="totalPoints">0</div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h3>آخر الطلبات</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                                <th>النقاط</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrders">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h3>إحصائيات الأداء</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- قسم الطلبات الجديدة -->
+            <div class="section" id="new-orders-section" style="display: none;">
+                <h2>الطلبات الجديدة</h2>
+                
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>العميل</th>
+                                <th>التاريخ</th>
+                                <th>الوصف</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newOrders">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- قسم الطلبات قيد التنفيذ -->
+            <div class="section" id="in-progress-section" style="display: none;">
+                <h2>الطلبات قيد التنفيذ</h2>
+                
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>العميل</th>
+                                <th>تاريخ البدء</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inProgressOrders">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- قسم الطلبات المكتملة -->
+            <div class="section" id="completed-section" style="display: none;">
+                <h2>الطلبات المكتملة</h2>
+                
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>العميل</th>
+                                <th>تاريخ الإكمال</th>
+                                <th>النقاط</th>
+                                <th>التقييم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedOrders">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- مساحة عمل التصميم -->
+    <div class="design-workspace" id="designWorkspace">
+        <div class="workspace-container">
+            <div class="workspace-header">
+                <div class="workspace-title" id="workspaceTitle">طلب رقم: DSGN-12345</div>
+                <button class="workspace-close" onclick="closeWorkspace()">&times;</button>
+            </div>
+            
+            <div class="workspace-content">
+                <div>
+                    <div class="workspace-section">
+                        <h3>الصورة الأصلية</h3>
+                        <img src="" alt="الصورة الأصلية" class="workspace-image" id="originalImage">
+                    </div>
+                    
+                    <div class="workspace-section">
+                        <h3>ملاحظات العميل</h3>
+                        <div id="clientNotes" style="padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                            لا توجد ملاحظات
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="workspace-section">
+                        <h3>التصميم النهائي</h3>
+                        <img src="" alt="معاينة التصميم" class="workspace-image" id="finalDesignPreview" style="display: none;">
+                        <input type="file" id="finalDesignUpload" accept="image/*" style="display: none;">
+                        <button class="action-btn accept-btn" onclick="document.getElementById('finalDesignUpload').click()">
+                            <i class="fas fa-upload"></i> رفع التصميم النهائي
+                        </button>
+                    </div>
+                    
+                    <div class="workspace-section">
+                        <h3>ملاحظات المصمم</h3>
+                        <textarea class="workspace-notes" id="designerNotes" placeholder="أدخل ملاحظاتك هنا..."></textarea>
+                    </div>
+                    
+                    <div class="workspace-actions">
+                        <button class="action-btn reject-btn" onclick="closeWorkspace()">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                        <button class="action-btn accept-btn" onclick="submitDesign()">
+                            <i class="fas fa-paper-plane"></i> إرسال التصميم
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- رسائل Toast -->
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK v11.9.1 -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, updateDoc, onSnapshot, query, where, getDocs, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCs5uEbZeiGTqey6Z-YdOa6HNWk_WkKlb4",
+            authDomain: "design-for-me.firebaseapp.com",
+            projectId: "design-for-me",
+            storageBucket: "design-for-me.appspot.com",
+            messagingSenderId: "769602104559",
+            appId: "1:769602104559:web:bdc7c12db4f956818fff1a",
+            measurementId: "G-8ZW2737BP0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // ============= دوال النظام المحدثة =============
+        let currentDesigner = null;
+        let currentOrder = null;
+        let performanceChart = null;
+
+        // تسجيل الدخول
+        async function loginDesigner() {
+            const email = document.getElementById("designerEmail").value;
+            const password = document.getElementById("designerPassword").value;
+            
+            if (!email || !password) {
+                showToast("يرجى إدخال البريد الإلكتروني وكلمة المرور", "error");
+                return;
+            }
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const designerDoc = await getDoc(doc(db, "designers", userCredential.user.uid));
+                
+                if (designerDoc.exists()) {
+                    currentDesigner = {
+                        id: userCredential.user.uid,
+                        ...designerDoc.data()
+                    };
+                    
+                    // تحقق من صلاحية الحساب
+                    if (!['senior', 'junior'].includes(currentDesigner.role)) {
+                        await signOut(auth);
+                        showToast("صلاحياتك غير كافية للوصول إلى لوحة المصممين", "error");
+                        return;
+                    }
+                    
+                    loadDashboard();
+                    document.getElementById("loginContainer").style.display = "none";
+                    document.getElementById("dashboard").style.display = "grid";
+                    showToast(`مرحباً ${currentDesigner.name}!`, "success");
+                } else {
+                    await signOut(auth);
+                    showToast("ليس لديك صلاحيات المصمم!", "error");
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                let errorMessage = "حدث خطأ في تسجيل الدخول";
+                if (error.code === "auth/invalid-credential") {
+                    errorMessage = "البريد الإلكتروني أو كلمة المرور غير صحيحة";
+                } else if (error.code === "auth/too-many-requests") {
+                    errorMessage = "تم تجاوز عدد المحاولات المسموح بها، يرجى المحاولة لاحقاً";
+                }
+                showToast(errorMessage, "error");
+            }
+        }
+
+        // تحميل لوحة التحكم
+        async function loadDashboard() {
+            if (!currentDesigner) return;
+            
+            document.getElementById("designerName").textContent = currentDesigner.name;
+            document.getElementById("designerPoints").textContent = `${currentDesigner.points || 0} نقطة`;
+            document.getElementById("designerAvatar").textContent = currentDesigner.name.charAt(0).toUpperCase();
+            
+            await updateStats();
+            await loadOrders();
+            loadChart();
+            
+            // متابعة تحديثات الطلبات في الوقت الحقيقي
+            setupRealTimeListeners();
+        }
+
+        // تحديث الإحصائيات
+        async function updateStats() {
+            if (!currentDesigner) return;
+            
+            const ordersSnapshot = await getDocs(collection(db, "design_orders"));
+            const allOrders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            const newOrders = allOrders.filter(o => o.status === "pending").length;
+            const inProgress = allOrders.filter(o => o.status === "in_progress" && o.designerId === currentDesigner.id).length;
+            const completed = allOrders.filter(o => o.status === "completed" && o.designerId === currentDesigner.id).length;
+            
+            document.getElementById("newOrdersCount").textContent = newOrders;
+            document.getElementById("inProgressCount").textContent = inProgress;
+            document.getElementById("completedCount").textContent = completed;
+            document.getElementById("totalPoints").textContent = currentDesigner.points || 0;
+            
+            // تحميل آخر الطلبات
+            const recentOrders = allOrders
+                .filter(o => o.designerId === currentDesigner.id)
+                .sort((a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0))
+                .slice(0, 5);
+                
+            const recentOrdersHtml = recentOrders.map(order => `
+                <tr>
+                    <td>${order.id}</td>
+                    <td>${formatDate(order.createdAt?.toDate())}</td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(order.status)}">
+                            ${getStatusText(order.status)}
+                        </span>
+                    </td>
+                    <td class="points-system">${order.points || 0}</td>
+                </tr>
+            `).join("");
+            
+            document.getElementById("recentOrders").innerHTML = recentOrdersHtml;
+        }
+
+        // تحميل الطلبات
+        async function loadOrders() {
+            if (!currentDesigner) return;
+            
+            // الطلبات الجديدة
+            const newOrdersQuery = query(
+                collection(db, "design_orders"),
+                where("status", "==", "pending")
+            );
+            const newOrdersSnapshot = await getDocs(newOrdersQuery);
+                
+            const newOrdersHtml = newOrdersSnapshot.docs.map(doc => {
+                const order = { id: doc.id, ...doc.data() };
+                return `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.clientName || 'عميل'}</td>
+                        <td>${formatDate(order.createdAt?.toDate())}</td>
+                        <td>${order.description || 'لا يوجد وصف'}</td>
+                        <td>
+                            <button onclick="acceptOrder('${order.id}')" class="action-btn accept-btn">قبول</button>
+                            <button onclick="rejectOrder('${order.id}')" class="action-btn reject-btn">رفض</button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+            document.getElementById("newOrders").innerHTML = newOrdersHtml;
+            
+            // الطلبات قيد التنفيذ
+            const inProgressQuery = query(
+                collection(db, "design_orders"),
+                where("status", "==", "in_progress"),
+                where("designerId", "==", currentDesigner.id)
+            );
+            const inProgressSnapshot = await getDocs(inProgressQuery);
+                
+            const inProgressHtml = inProgressSnapshot.docs.map(doc => {
+                const order = { id: doc.id, ...doc.data() };
+                return `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.clientName || 'عميل'}</td>
+                        <td>${formatDate(order.startedAt?.toDate())}</td>
+                        <td>
+                            <span class="status-badge status-in-progress">قيد التنفيذ</span>
+                        </td>
+                        <td>
+                            <button onclick="openDesignWorkspace('${order.id}')" class="action-btn accept-btn">فتح</button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+            document.getElementById("inProgressOrders").innerHTML = inProgressHtml;
+            
+            // الطلبات المكتملة
+            const completedQuery = query(
+                collection(db, "design_orders"),
+                where("status", "==", "completed"),
+                where("designerId", "==", currentDesigner.id)
+            );
+            const completedSnapshot = await getDocs(completedQuery);
+                
+            const completedHtml = completedSnapshot.docs.map(doc => {
+                const order = { id: doc.id, ...doc.data() };
+                return `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.clientName || 'عميل'}</td>
+                        <td>${formatDate(order.completedAt?.toDate())}</td>
+                        <td class="points-system">${order.points || 0}</td>
+                        <td class="star-rating">${order.rating ? '★'.repeat(order.rating) + ` (${order.rating}/5)` : '--'}</td>
+                    </tr>
+                `;
+            }).join("");
+            document.getElementById("completedOrders").innerHTML = completedHtml;
+        }
+
+        // قبول الطلب
+        async function acceptOrder(orderId) {
+            try {
+                await updateDoc(doc(db, "design_orders", orderId), {
+                    status: "in_progress",
+                    designerId: currentDesigner.id,
+                    designerName: currentDesigner.name,
+                    startedAt: serverTimestamp()
+                });
+                
+                showToast("تم قبول الطلب بنجاح!", "success");
+                await updateStats();
+                await loadOrders();
+            } catch (error) {
+                console.error("Accept order error:", error);
+                showToast("حدث خطأ أثناء قبول الطلب", "error");
+            }
+        }
+
+        // رفض الطلب
+        async function rejectOrder(orderId) {
+            try {
+                await updateDoc(doc(db, "design_orders", orderId), {
+                    status: "rejected",
+                    rejectedAt: serverTimestamp(),
+                    rejectedBy: currentDesigner.name
+                });
+                
+                showToast("تم رفض الطلب بنجاح!", "success");
+                await updateStats();
+                await loadOrders();
+            } catch (error) {
+                console.error("Reject order error:", error);
+                showToast("حدث خطأ أثناء رفض الطلب", "error");
+            }
+        }
+
+        // فتح مساحة العمل
+        async function openDesignWorkspace(orderId) {
+            showSection("dashboard-section");
+            document.getElementById("designWorkspace").style.display = "block";
+            
+            const orderDoc = await getDoc(doc(db, "design_orders", orderId));
+            if (orderDoc.exists()) {
+                const order = { id: orderDoc.id, ...orderDoc.data() };
+                currentOrder = order;
+                
+                document.getElementById("workspaceTitle").textContent = `طلب رقم: ${order.id}`;
+                document.getElementById("clientNotes").textContent = order.description || "لا يوجد وصف";
+                
+                // تحميل الصورة الأصلية
+                try {
+                    const imageUrl = await getDownloadURL(ref(storage, order.imageUrl));
+                    document.getElementById("originalImage").src = imageUrl;
+                } catch (error) {
+                    console.error("Error loading image:", error);
+                    document.getElementById("originalImage").src = "placeholder.jpg";
+                    showToast("حدث خطأ في تحميل الصورة الأصلية", "error");
+                }
+                
+                // مسح معاينة التصميم النهائي
+                document.getElementById("finalDesignPreview").src = "";
+                document.getElementById("finalDesignPreview").style.display = "none";
+                document.getElementById("designerNotes").value = "";
+                
+                // إعداد مستمع لرفع التصميم
+                document.getElementById("finalDesignUpload").onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById("finalDesignPreview").src = event.target.result;
+                            document.getElementById("finalDesignPreview").style.display = "block";
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
+            }
+        }
+
+        // إغلاق مساحة العمل
+        function closeWorkspace() {
+            document.getElementById("designWorkspace").style.display = "none";
+            document.getElementById("finalDesignUpload").value = "";
+        }
+
+        // إرسال التصميم
+        async function submitDesign() {
+            const fileInput = document.getElementById("finalDesignUpload");
+            const designerNotes = document.getElementById("designerNotes").value;
+            
+            if (!fileInput.files[0]) {
+                showToast("يرجى رفع التصميم النهائي أولاً", "error");
+                return;
+            }
+            
+            try {
+                showToast("جاري إرسال التصميم...", "success");
+                
+                // رفع التصميم النهائي
+                const file = fileInput.files[0];
+                const storageRef = ref(storage, `designs/${currentOrder.id}_final_${file.name}`);
+                const uploadTask = await uploadBytes(storageRef, file);
+                const finalDesignUrl = await getDownloadURL(uploadTask.ref);
+                
+                // تحديث حالة الطلب
+                await updateDoc(doc(db, "design_orders", currentOrder.id), {
+                    status: "completed",
+                    finalDesignUrl: finalDesignUrl,
+                    designerNotes: designerNotes,
+                    completedAt: serverTimestamp()
+                });
+                
+                // تحديث نقاط المصمم
+                await updateDoc(doc(db, "designers", currentDesigner.id), {
+                    points: increment(currentOrder.points || 10)
+                });
+                
+                // تحديث البيانات المحلية
+                currentDesigner.points += currentOrder.points || 10;
+                document.getElementById("designerPoints").textContent = `${currentDesigner.points} نقطة`;
+                
+                showToast("تم إرسال التصميم للعميل بنجاح!", "success");
+                closeWorkspace();
+                
+                // إعادة تحميل البيانات
+                await updateStats();
+                await loadOrders();
+            } catch (error) {
+                console.error("Submit design error:", error);
+                showToast("حدث خطأ أثناء إرسال التصميم", "error");
+            }
+        }
+
+        // إعداد مستمعين للتحديثات في الوقت الحقيقي
+        function setupRealTimeListeners() {
+            if (!currentDesigner) return;
+            
+            // متابعة الطلبات الجديدة
+            const newOrdersQuery = query(
+                collection(db, "design_orders"),
+                where("status", "==", "pending")
+            );
+            
+            onSnapshot(newOrdersQuery, (snapshot) => {
+                loadOrders();
+                updateStats();
+            });
+            
+            // متابعة طلبات المصمم
+            const designerOrdersQuery = query(
+                collection(db, "design_orders"),
+                where("designerId", "==", currentDesigner.id)
+            );
+            
+            onSnapshot(designerOrdersQuery, (snapshot) => {
+                loadOrders();
+                updateStats();
+            });
+        }
+
+        // تحميل الرسم البياني
+        function loadChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+            
+            // بيانات افتراضية (سيتم استبدالها ببيانات حقيقية)
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                    datasets: [{
+                        label: 'الطلبات المكتملة',
+                        data: [12, 19, 3, 5, 2, 3],
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // عرض قسم معين
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // تحديث القائمة النشطة
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            let activeNavItem = null;
+            switch(sectionId) {
+                case 'dashboard-section':
+                    activeNavItem = document.querySelector('.nav-item:nth-child(1)');
+                    break;
+                case 'new-orders-section':
+                    activeNavItem = document.querySelector('.nav-item:nth-child(2)');
+                    break;
+                case 'in-progress-section':
+                    activeNavItem = document.querySelector('.nav-item:nth-child(3)');
+                    break;
+                case 'completed-section':
+                    activeNavItem = document.querySelector('.nav-item:nth-child(4)');
+                    break;
+            }
+            
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+        }
+
+        // عرض رسائل Toast
+        function showToast(message, type = "success") {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "toast";
+            toast.classList.add(type);
+            toast.classList.add("show");
+            
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // تنسيق التاريخ
+        function formatDate(date, lang = 'ar') {
+            if (!date) return '--';
+            
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            
+            return date.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', options);
+        }
+
+        // الحصول على فئة الحالة
+        function getStatusClass(status) {
+            switch(status) {
+                case 'pending': return 'status-pending';
+                case 'in_progress': return 'status-in-progress';
+                case 'completed': return 'status-completed';
+                case 'rejected': return 'status-rejected';
+                default: return '';
+            }
+        }
+
+        // الحصول على نص الحالة
+        function getStatusText(status) {
+            switch(status) {
+                case 'pending': return 'بانتظار القبول';
+                case 'in_progress': return 'قيد التنفيذ';
+                case 'completed': return 'مكتمل';
+                case 'rejected': return 'مرفوض';
+                default: return status;
+            }
+        }
+
+        // عند تحميل الصفحة
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // المستخدم مسجل دخوله
+                getDoc(doc(db, "designers", user.uid))
+                    .then(doc => {
+                        if (doc.exists()) {
+                            currentDesigner = {
+                                id: user.uid,
+                                ...doc.data()
+                            };
+                            loadDashboard();
+                            document.getElementById("loginContainer").style.display = "none";
+                            document.getElementById("dashboard").style.display = "grid";
+                        } else {
+                            signOut(auth);
+                        }
+                    });
+            } else {
+                document.getElementById("loginContainer").style.display = "flex";
+                document.getElementById("dashboard").style.display = "none";
+            }
+        });
+
+        // جعل الدوال متاحة عالمياً لاستخدامها في الأحداث
+        window.loginDesigner = loginDesigner;
+        window.acceptOrder = acceptOrder;
+        window.rejectOrder = rejectOrder;
+        window.openDesignWorkspace = openDesignWorkspace;
+        window.closeWorkspace = closeWorkspace;
+        window.submitDesign = submitDesign;
+        window.showSection = showSection;
+    </script>
+    
 </body>
 </html>
